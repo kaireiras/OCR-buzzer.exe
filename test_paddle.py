@@ -4,11 +4,16 @@ os.environ["PADDLE_PDX_DISABLE_MODEL_SOURCE_CHECK"] = "True"
 os.environ["FLAGS_use_mkldnn"] = "0"
 
 import cv2
+from ocr_device import get_ocr_device
 from paddleocr import PaddleOCR
 
-# Matikan enable_mkldnn untuk melewati bug PIR oneDNN di PaddlePaddle 3.x
+OCR_DEVICE = get_ocr_device()
+print(f"Menggunakan perangkat OCR: {OCR_DEVICE}")
+
+# Matikan enable_mkldnn untuk melewati bug PIR oneDNN di PaddlePaddle 3.x (saat fallback ke CPU)
 ocr = PaddleOCR(
     lang="en",
+    device=OCR_DEVICE,
     enable_mkldnn=False,
     use_doc_orientation_classify=False,
     use_doc_unwarping=False,

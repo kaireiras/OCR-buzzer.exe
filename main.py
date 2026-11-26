@@ -474,7 +474,11 @@ import cv2
 import numpy as np
 from fastapi import FastAPI, File, HTTPException, UploadFile
 from fastapi.middleware.cors import CORSMiddleware
+from ocr_device import get_device_info, get_ocr_device
 from paddleocr import PaddleOCR
+
+OCR_DEVICE = get_ocr_device()
+DEVICE_INFO = get_device_info(OCR_DEVICE)
 
 app = FastAPI(title="Posyandu Universal Offline OCR API")
 
@@ -485,9 +489,10 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
-# Gunakan text_det_limit_side_len=640 agar cepat di CPU (~3-5 detik) tanpa kehilangan ketajaman
+# Gunakan text_det_limit_side_len=640 agar cepat tanpa kehilangan ketajaman
 ocr = PaddleOCR(
     lang="en",
+    device=OCR_DEVICE,
     text_det_limit_side_len=640,
     text_det_limit_type="max",
     enable_mkldnn=False,
@@ -688,7 +693,13 @@ def proses_gambar_kia(img_bgr: np.ndarray) -> dict:
 
 @app.get("/")
 def health_check():
-  return {"status": "ready", "engine": "PaddleOCR Fast Universal CPU"}
+  return {
+      "status": "ready",
+      "engine": f"PaddleOCR Fast Universal ({OCR_DEVICE.upper()})",
+      "device": DEVICE_INFO["device"],
+      "cuda_available": DEVICE_INFO["cuda_available"],
+      "gpu_name": DEVICE_INFO["gpu_name"],
+  }
 
 
 @app.post("/scan-kia")

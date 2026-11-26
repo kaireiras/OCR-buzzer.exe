@@ -2,8 +2,8 @@ import os
 import time
 import cv2
 
-# Impor fungsi ekstraksi langsung dari main.py Anda
-from main import proses_gambar_kia
+# Impor fungsi ekstraksi dan info perangkat langsung dari main.py Anda
+from main import DEVICE_INFO, OCR_DEVICE, proses_gambar_kia
 
 
 def hitung_levenshtein(ref: str, hyp: str) -> int:
@@ -90,6 +90,8 @@ def jalankan_evaluasi_cer():
 
   print("=" * 65)
   print("EVALUASI CHARACTER ERROR RATE (CER) - PADDLEOCR KIA PIPELINE")
+  gpu_label = f" ({DEVICE_INFO['gpu_name']})" if DEVICE_INFO.get("gpu_name") else ""
+  print(f"Perangkat Inferensi: {OCR_DEVICE}{gpu_label}")
   print("=" * 65)
 
   for item in DATASET_UJI:
@@ -177,7 +179,7 @@ def jalankan_evaluasi_cer():
   print(f"CER Mentah (PaddleOCR Murni)      : {overall_cer_raw:.2f}% ({total_error_raw}/{total_karakter_gt} error)")
   print(f"CER Akhir (+ Post-Processing)     : {overall_cer_final:.2f}% ({total_error_final}/{total_karakter_gt} error)")
   print(f"Character Accuracy Akhir (100-CER): {100 - overall_cer_final:.2f}%")
-  print(f"Rata-rata Waktu Inferensi CPU     : {avg_latensi:.2f} detik/gambar")
+  print(f"Rata-rata Waktu Inferensi ({OCR_DEVICE.upper()}) : {avg_latensi:.2f} detik/gambar")
   print("-" * 65)
   print("Rincian CER Akhir per Kolom:")
   for key in ["tanggal", "umur", "bb", "tb"]:

@@ -5,10 +5,14 @@ os.environ["FLAGS_use_mkldnn"] = "0"
 
 import re
 import cv2
+from ocr_device import get_ocr_device
 from paddleocr import PaddleOCR
+
+OCR_DEVICE = get_ocr_device()
 
 ocr = PaddleOCR(
     lang="en",
+    device=OCR_DEVICE,
     enable_mkldnn=False,
     use_doc_orientation_classify=False,
     use_doc_unwarping=False,
