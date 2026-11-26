@@ -194,9 +194,23 @@ Ringkasan hasil evaluasi pada `gpu:0` (NVIDIA GeForce RTX 3050 6GB Laptop GPU):
 | `kartu_pink_baris22.jpeg` | Kartu Pink (Baris ke-22) | 16.67% | **5.56%** | Berhasil |
 | `kartu_biru_baris20.jpeg` | Kartu Biru (Baris ke-20, tinta pudar) | — | — | Header tabel tidak terdeteksi |
 
-- **Micro-Average CER Raw OCR:** `17.14%` (6/35 karakter salah)
-- **Micro-Average CER Akhir (+ Post-Processing):** `2.86%` (1/35 karakter salah)
-- **Character Accuracy Akhir:** `97.14%`
+**Ringkasan Hasil Evaluasi Keseluruhan (Micro-Average CER):**
+
+- **Total Sampel Kartu Diuji:** `2 kartu`
+- **Total Karakter Ground Truth (N):** `35 karakter`
+- **CER Mentah (PaddleOCR Murni):** `17.14%` (`6/35` error)
+- **CER Akhir (+ Post-Processing):** `2.86%` (`1/35` error)
+- **Character Accuracy Akhir (`100 - CER`):** `97.14%`
+- **Rata-rata Waktu Inferensi (`GPU:0`):** `1.16 detik/gambar`
+
+**Rincian CER Akhir per Kolom:**
+
+| Kolom | CER Akhir | Jumlah Karakter Salah |
+| :--- | :---: | :---: |
+| `tanggal` | `0.00%` | 0/16 karakter |
+| `umur` | `0.00%` | 0/4 karakter |
+| `bb` | `0.00%` | 0/7 karakter |
+| `tb` | `12.50%` | 1/8 karakter |
 
 ---
 
