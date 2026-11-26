@@ -1,10 +1,15 @@
-import os
+"""Skrip debug mentah PaddleOCR untuk memeriksa koordinat bounding box & teks per item."""
 
-os.environ["PADDLE_PDX_DISABLE_MODEL_SOURCE_CHECK"] = "True"
-os.environ["FLAGS_use_mkldnn"] = "0"
+from pathlib import Path
+import sys
 
 import cv2
-from ocr_device import get_ocr_device
+
+PROJECT_ROOT = Path(__file__).resolve().parent.parent
+if str(PROJECT_ROOT) not in sys.path:
+  sys.path.insert(0, str(PROJECT_ROOT))
+
+from app.device import get_ocr_device
 from paddleocr import PaddleOCR
 
 OCR_DEVICE = get_ocr_device()
@@ -20,19 +25,17 @@ ocr = PaddleOCR(
     use_textline_orientation=False,
 )
 
-img_path = "WhatsApp Image 2026-11-10 at 08.27.51.jpeg"
-img = cv2.imread(img_path)
+img_path = PROJECT_ROOT / "samples" / "kartu_pink_baris11.jpeg"
+img = cv2.imread(str(img_path))
 
 if img is None:
-  raise FileNotFoundError(
-      f"File '{img_path}' tidak ditemukan di folder ini!"
-  )
+  raise FileNotFoundError(f"File '{img_path}' tidak ditemukan!")
 
 # Hilangkan warna kertas pink dengan mengambil Red Channel (index 2)
 red_channel = img[:, :, 2]
-cv2.imwrite("temp_red.jpg", red_channel)
+img_input = cv2.cvtColor(red_channel, cv2.COLOR_GRAY2BGR)
 
-hasil = ocr.predict("temp_red.jpg")
+hasil = ocr.predict(img_input)
 
 print("=== HASIL DETEKSI PADDLEOCR ===")
 for res in hasil:

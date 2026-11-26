@@ -1,5 +1,9 @@
+"""Eksperimen ekstraksi angka menggunakan Google Gemini API (memerlukan GEMINI_API_KEY di .env)."""
+
 import json
+from pathlib import Path
 import time
+
 from dotenv import load_dotenv
 from google import genai
 from google.genai import errors, types
@@ -8,6 +12,9 @@ from pydantic import BaseModel, Field
 
 load_dotenv()
 client = genai.Client()
+
+PROJECT_ROOT = Path(__file__).resolve().parent.parent
+SAMPLE_IMAGE = PROJECT_ROOT / "samples" / "potongan_angka.jpeg"
 
 
 class DataPengukuranBayi(BaseModel):
@@ -22,7 +29,7 @@ class DataPengukuranBayi(BaseModel):
   )
 
 
-gambar = Image.open("sample2.jpeg")
+gambar = Image.open(SAMPLE_IMAGE)
 
 prompt = """
 Ini adalah potongan gambar tulisan tangan catatan pengukuran bayi:

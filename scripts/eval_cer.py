@@ -1,9 +1,16 @@
-import os
+from pathlib import Path
+import sys
 import time
 import cv2
 
-# Impor fungsi ekstraksi dan info perangkat langsung dari main.py Anda
-from main import DEVICE_INFO, OCR_DEVICE, proses_gambar_kia
+PROJECT_ROOT = Path(__file__).resolve().parent.parent
+if str(PROJECT_ROOT) not in sys.path:
+  sys.path.insert(0, str(PROJECT_ROOT))
+
+# Impor fungsi ekstraksi dan info perangkat langsung dari app.ocr_pipeline
+from app.ocr_pipeline import DEVICE_INFO, OCR_DEVICE, init_ocr_engine, proses_gambar_kia
+
+SAMPLES_DIR = PROJECT_ROOT / "samples"
 
 
 def hitung_levenshtein(ref: str, hyp: str) -> int:
@@ -46,7 +53,7 @@ def hitung_cer(ground_truth: str, prediksi: str) -> tuple[float, int, int]:
 # Sesuaikan daftar gambar uji dan ground truth tulisan tangan yang sebenarnya
 DATASET_UJI = [
     {
-        "file": "WhatsApp Image 2026-11-10 at 08.27.51.jpeg",
+        "file": SAMPLES_DIR / "kartu_pink_baris11.jpeg",
         "kategori": "Kartu Pink (Baris ke-11)",
         "ground_truth": {
             "tanggal": "15-10-26",
@@ -56,7 +63,7 @@ DATASET_UJI = [
         },
     },
     {
-        "file": "testing2.jpeg",
+        "file": SAMPLES_DIR / "kartu_pink_baris22.jpeg",
         "kategori": "Kartu Pink (Baris ke-22)",
         "ground_truth": {
             "tanggal": "12-11-26",
@@ -66,7 +73,7 @@ DATASET_UJI = [
         },
     },
     {
-        "file": "testing.jpeg",
+        "file": SAMPLES_DIR / "kartu_biru_baris20.jpeg",
         "kategori": "Kartu Biru (Baris ke-20, tinta pudar)",
         "ground_truth": {
             "tanggal": "12-11-26",
@@ -79,6 +86,8 @@ DATASET_UJI = [
 
 
 def jalankan_evaluasi_cer():
+  init_ocr_engine()
+
   total_sampel = 0
   total_karakter_gt = 0
   total_error_raw = 0
@@ -95,17 +104,17 @@ def jalankan_evaluasi_cer():
   print("=" * 65)
 
   for item in DATASET_UJI:
-    path = item["file"]
-    if not os.path.exists(path):
-      print(f"[SKIP] File '{path}' tidak ditemukan di direktori ini.\n")
+    path = Path(item["file"])
+    if not path.exists():
+      print(f"[SKIP] File '{path.name}' tidak ditemukan di '{path.parent}'.\n")
       continue
 
-    img = cv2.imread(path)
+    img = cv2.imread(str(path))
     mulai = time.time()
     try:
       hasil = proses_gambar_kia(img)
     except Exception as e:
-      print(f"[ERROR] Gagal memproses '{path}': {e}\n")
+      print(f"[ERROR] Gagal memproses '{path.name}': {e}\n")
       continue
     latensi = round(time.time() - mulai, 2)
 
@@ -125,7 +134,7 @@ def jalankan_evaluasi_cer():
     err_sampel_final = 0
     len_sampel_gt = 0
 
-    print(f"Sampel #{total_sampel}: {path} [{item['kategori']}]")
+    print(f"Sampel #{total_sampel}: {path.name} [{item['kategori']}]")
     print(f"Waktu Proses: {latensi} detik | Perlu Konfirmasi Kader: {hasil['perlu_konfirmasi']}")
     print("-" * 65)
     print(f"{'Atribut':<10} | {'Ground Truth':<12} | {'Raw OCR':<12} | {'Final':<10} | {'CER Final'}")

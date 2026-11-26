@@ -1,0 +1,13 @@
+# Core API & OCR runtime
+fastapi>=0.115.0
+uvicorn[standard]>=0.30.0
+python-multipart>=0.0.9
+numpy>=1.26.0
+opencv-python-headless>=4.10.0
+paddleocr>=3.0.0
+
+# Pilih SALAH SATU backend PaddlePaddle sesuai perangkat Anda:
+# - CPU only:
+#   paddlepaddle>=3.0.0
+# - NVIDIA GPU (CUDA):
+#   paddlepaddle-gpu>=3.0.0

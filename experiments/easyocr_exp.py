@@ -1,4 +1,11 @@
+"""Eksperimen recognition kolom BB dan TB menggunakan EasyOCR.
+
+Skrip ini membaca file potongan debug (`debug_kolom_bb.jpg` dan `debug_kolom_tb.jpg`)
+yang dihasilkan dari eksperimen cropping kolom sebelumnya.
+"""
+
 import re
+
 import cv2
 import easyocr
 

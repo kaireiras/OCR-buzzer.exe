@@ -2,10 +2,7 @@ import os
 import site
 import sysconfig
 
-# Set safe environment defaults before importing Paddle/PaddleOCR
-os.environ.setdefault("PADDLE_PDX_DISABLE_MODEL_SOURCE_CHECK", "True")
-os.environ.setdefault("FLAGS_allocator_strategy", "auto_growth")
-os.environ.setdefault("FLAGS_use_mkldnn", "0")
+import app.config  # noqa: F401 - ensure Paddle env defaults are set before importing paddle
 
 _DLL_HANDLES = []
 _DLL_DIRS_ADDED = set()
